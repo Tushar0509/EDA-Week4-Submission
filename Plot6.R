@@ -1,21 +1,25 @@
-## read in emissions data and classification code
-emissions_data <- readRDS("summarySCC_PM25.rds")
-class_code <- readRDS("Source_Classification_Code.rds")
-
-## subset data from Baltimore City, LA county and from type "on road"
-baltLA_car_data <- subset(emissions_data, emissions_data$fips=="24510" |
-                            emissions_data$fips=="06037" &
-                            emissions_data$type=="ON-ROAD")
-baltLA_car_year <- aggregate(baltLA_car_data$Emissions, 
-                             by=list(baltLA_car_data$fips, baltLA_car_data$year),
-                             FUN=sum)
-colnames(baltLA_car_year) <- c("City", "Year", "Emissions")
-
-## create plot comparing emissions from motor vehicles in Baltimore and LA from 1999-2008
+library(dplyr)
 library(ggplot2)
-png(filename = "Plot6.png")
-qplot(Year, Emissions, data = baltLA_car_year, color = City, geom = "line") +
-  ggtitle("Emissions of PM2.5 in Baltimore City (24510) and LA County (06037)") + 
-  ylab("Total Emissions from motor vehicles (tons)") + 
-  xlab("Year") 
+NEI<- readRDS("summarySCC_PM25.rds")
+SCC<-
+  readRDS("Source_Classification_Code.rds")
+emissions_by_year <- NEI %>%filter(fips%in% c("24510", "06037") & type == "ON-ROAD") %>%group_by(year, fips)%>%summarize(total_emissions =
+               sum(Emissions))
+emissions_by_year$year <-
+  as.factor(emissions_by_year$year)
+emissions_by_year$county_name <-
+  factor(emissions_by_year$fips,
+         levels=c("06037", "24510"), labels=c("Los
+Angeles County", "Baltimore City"))
+ggplot(emissions_by_year, aes(x=year,
+                              y=total_emissions)) +
+  geom_bar(stat="identity",
+           aes(fill=county_name), position =
+             "dodge")
++guides(fill=guide_legend(title=NULL)) +
+  labs(x="Year", y="PM2.5 Emissions
+(tons)") + ggtitle("Vehicle PM2.5 Emissions -
+Baltimore City and LA County") +
+  theme(legend.position="bottom")
+png("Plot6.png")
 dev.off()
