@@ -10,7 +10,7 @@ baltimore_car_year <- aggregate(baltimore_car_data$Emissions,
 colnames(baltimore_car_year) <- c("Year", "Emissions")
 
 ## create plot showing car related emissions in Baltimore City from 1999-2008
-png(filename = "plot5.png")
+png(filename = "Plot5.png")
 plot(baltimore_car_year$Year, baltimore_car_year$Emissions,
      type = "o",
      xlab = "year",

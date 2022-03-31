@@ -12,7 +12,7 @@ coal_emissions_year <- aggregate(coal_emissions_data$Emissions,
 colnames(coal_emissions_year) <- c("year", "emissions")
 
 ## create a plot showing coal related emissions across the US from 1999-2008
-png(filename = "plot4.png")
+png(filename = "Plot4.png")
 plot(coal_emissions_year$year, coal_emissions_year$emissions, type = "o",
      xlab = "Year",
      ylab = "Total Emissions (tons)",
